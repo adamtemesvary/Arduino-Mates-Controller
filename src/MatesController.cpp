@@ -207,38 +207,6 @@ bool MatesController::setWidgetValue(int16_t widget, int16_t value) {
   return res;
 }
 
-bool MatesController::setWidgetValue(int16_t widget, int32_t value) {
-  if (debugSerial != NULL) {
-    debugSerial->write("Set Widget (0x");
-    debugSerial->print(widget, HEX);
-    debugSerial->write(") value to ");
-    debugSerial->print(value);
-    debugSerial->write("... ");
-  }
-  WriteCommand(MATES_CMD_SET_WIDGET_32VAL);
-  WriteWord(widget);
-  WriteLong(value);
-  bool res = WaitForACK();
-  if ((debugSerial != NULL) && res) debugSerial->write('\n');
-  return res;
-}
-
-bool MatesController::setWidgetValue(int16_t widget, float value) {
-  if (debugSerial != NULL) {
-    debugSerial->write("Set Widget (0x");
-    debugSerial->print(widget, HEX);
-    debugSerial->write(") value to ");
-    debugSerial->print(value);
-    debugSerial->write("... ");
-  }
-  WriteCommand(MATES_CMD_SET_WIDGET_32VAL);
-  WriteWord(widget);
-  WriteFloat(value);
-  bool res = WaitForACK();
-  if ((debugSerial != NULL) && res) debugSerial->write('\n');
-  return res;
-}
-
 int16_t MatesController::getWidgetValue(int16_t widget) {
   if (debugSerial != NULL) {
     debugSerial->write("Query widget (0x");
@@ -251,31 +219,31 @@ int16_t MatesController::getWidgetValue(int16_t widget) {
 }
 
 bool MatesController::setWidgetValue(MatesWidget type, uint8_t index, int16_t value) {
-  return setWidgetValue((type << 8) | index, value);
-}
-
-bool MatesController::setWidgetValue(MatesWidget type, uint8_t index, int32_t value) {
-  return setWidgetValue((type << 8) | index, value);
-}
-
-bool MatesController::setWidgetValue(MatesWidget type, uint8_t index, float value) {
-  return setWidgetValue((type << 8) | index, value);
+  return setWidgetValue((int16_t)((type << 8) | index), value);
 }
 
 int16_t MatesController::getWidgetValue(MatesWidget type, uint8_t index) {
-  return getWidgetValue((type << 8) | index);
+  return getWidgetValue((int16_t)((type << 8) | index));
+}
+
+bool MatesController::setLedDigitsValue(uint8_t index, int32_t value) {
+  return _setWidgetValue((int16_t)((MATES_LED_DIGITS << 8) | index), value);
+}
+
+bool MatesController::setLedDigitsValue(uint8_t index, float value) {
+  return _setWidgetValue((int16_t)((MATES_LED_DIGITS << 8) | index), value);
 }
 
 bool MatesController::setSpectrumValue(int16_t widget, uint8_t gaugeIndex, uint8_t value) {
-  return setWidgetValue(widget, (gaugeIndex << 8) | value);
+  return setWidgetValue(widget, (int16_t)((gaugeIndex << 8) | value));
 }
 
 bool MatesController::setLedSpectrumValue(uint8_t index, uint8_t gaugeIndex, uint8_t value) {
-  return setWidgetValue((MATES_LED_SPECTRUM << 8) | index, (gaugeIndex << 8) | value);
+  return setWidgetValue((int16_t)((MATES_LED_SPECTRUM << 8) | index), (int16_t)((gaugeIndex << 8) | value));
 }
 
 bool MatesController::setMediaSpectrumValue(uint8_t index, uint8_t gaugeIndex, uint8_t value) {
-  return setWidgetValue((MATES_MEDIA_SPECTRUM << 8) | index, (gaugeIndex << 8) | value);
+  return setWidgetValue((int16_t)((MATES_MEDIA_SPECTRUM << 8) | index), (int16_t)((gaugeIndex << 8) | value));
 }
 
 bool MatesController::setWidgetParam(int16_t widget, int16_t param, int16_t value) {
@@ -312,11 +280,11 @@ int16_t MatesController::getWidgetParam(int16_t widget, int16_t param) {
 }
 
 bool MatesController::setWidgetParam(MatesWidget type, uint8_t index, int16_t param, int16_t value) {
-  return setWidgetParam((type << 8) | index, param, value);
+  return setWidgetParam((int16_t)((type << 8) | index), param, value);
 }
 
 int16_t MatesController::getWidgetParam(MatesWidget type, uint8_t index, int16_t param) {
-  return getWidgetParam((type << 8) | index, param);
+  return getWidgetParam(((int16_t)(type << 8) | index), param);
 }
 
 void MatesController::setBufferSize(int size) {
@@ -344,7 +312,8 @@ bool MatesController::updateTextArea(uint16_t index, const char * format, ...) {
     debugSerial->write("... ");
   }
     
-  char buf[matesBufferSize];
+  // char buf[matesBufferSize];
+  char * buf = (char *) malloc(matesBufferSize);
   va_list args;
   va_start(args, format);
   vsprintf(buf, format, args);
@@ -354,6 +323,7 @@ bool MatesController::updateTextArea(uint16_t index, const char * format, ...) {
   WriteString(buf);
   bool res = WaitForACK();
   if ((debugSerial != NULL) && res) debugSerial->write('\n');
+  free(buf);
   return res;
 }
 
@@ -410,10 +380,12 @@ bool MatesController::appendToPrintArea(uint16_t index, const int8_t * buf, uint
 }
 
 bool MatesController::appendToPrintArea(uint16_t index, const char * format, ...) {
-  char buf[matesBufferSize];
+  // char buf[matesBufferSize];
+  char * buf = (char *) malloc(matesBufferSize);
   va_list args;
   va_start(args, format);
   vsprintf(buf, format, args);
+  free(buf);
   return appendToPrintArea(index, (int8_t *)buf, strlen(buf));
 }
 
@@ -448,10 +420,12 @@ bool MatesController::updateDotMatrix(uint16_t index, const int8_t * buf, uint16
 }
 
 bool MatesController::updateDotMatrix(uint16_t index, const char * format, ...) {
-  char buf[matesBufferSize];
+  // char buf[matesBufferSize];
+  char * buf = (char *) malloc(matesBufferSize);
   va_list args;
   va_start(args, format);
   vsprintf(buf, format, args);
+  free(buf);
   return updateDotMatrix(index, (int8_t *)buf, strlen(buf));
 }
 
@@ -561,5 +535,37 @@ bool MatesController::WaitForACK(uint16_t timeout) {
   bool res = (matesSerial->read()) == 0x06;
   matesError = res ? MATES_ERROR_NONE : MATES_ERROR_COMMAND_FAILED;
   if (debugSerial != NULL) debugSerial->write(res ? "Success" : "Failed\n");
+  return res;
+}
+
+bool MatesController::_setWidgetValue(int16_t widget, int32_t value) {
+  if (debugSerial != NULL) {
+    debugSerial->write("Set Widget (0x");
+    debugSerial->print(widget, HEX);
+    debugSerial->write(") value to ");
+    debugSerial->print(value);
+    debugSerial->write("... ");
+  }
+  WriteCommand(MATES_CMD_SET_WIDGET_32VAL);
+  WriteWord(widget);
+  WriteLong(value);
+  bool res = WaitForACK();
+  if ((debugSerial != NULL) && res) debugSerial->write('\n');
+  return res;
+}
+
+bool MatesController::_setWidgetValue(int16_t widget, float value) {
+  if (debugSerial != NULL) {
+    debugSerial->write("Set Widget (0x");
+    debugSerial->print(widget, HEX);
+    debugSerial->write(") value to ");
+    debugSerial->print(value);
+    debugSerial->write("... ");
+  }
+  WriteCommand(MATES_CMD_SET_WIDGET_32VAL);
+  WriteWord(widget);
+  WriteFloat(value);
+  bool res = WaitForACK();
+  if ((debugSerial != NULL) && res) debugSerial->write('\n');
   return res;
 }

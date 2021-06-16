@@ -353,58 +353,6 @@ This function can be used to set the 16-bit integer _value_ of the specified _wi
 
 <br/>
 
-### **setWidgetValue(type, index, value)**
-
-This function can be used to set the 16-bit integer _value_ of the widget specified by _type_ and _index_.
-
-<br/>
-
-| Parameters | Type        | Description                    |
-|:----------:|:-----------:| ------------------------------ |
-| type       | MatesWidget | The type of the target widget  |
-| index      | int8_t      | The index of the target widget |
-| value      | int32_t     | The new value for the widget   |
-
-<br/>
-
-**Return:** success or failure (_boolean_)
-
-<br/>
-
-#### Example: 
-    mates.setWidgetValue(MATES_LED_DIGITS, 0, 602214076); // Set value of LedDigits0 to 602214076
-
-**Note 1:** _All applicable widget types are listed in [here](src/includes/MatesWidgets.md)._
-**Note 2:** _This function is only applicable for **Int32** LedDigits_
-
-<br/>
-
-### **setWidgetValue(type, index, value)**
-
-This function can be used to set the 16-bit integer _value_ of the widget specified by _type_ and _index_.
-
-<br/>
-
-| Parameters | Type        | Description                    |
-|:----------:|:-----------:| ------------------------------ |
-| type       | MatesWidget | The type of the target widget  |
-| index      | int8_t      | The index of the target widget |
-| value      | float       | The new value for the widget   |
-
-<br/>
-
-**Return:** success or failure (_boolean_)
-
-<br/>
-
-#### Example: 
-    mates.setWidgetValue(LedDigits1, 3.1416); // Set value of LedDigits1 to 3.1416
-
-**Note 1:** _All applicable widget types are listed in [here](src/includes/MatesWidgets.md)._
-**Note 2:** _This function is only applicable for **Float** LedDigits_
-
-<br/>
-
 ### **getWidgetValue(type, index)**
 
 This function can be used to query the value of the widget specified by _type_ and _index_.
@@ -426,6 +374,79 @@ This function can be used to query the value of the widget specified by _type_ a
     int16_t widgetVal = mates.getWidgetValue(MATES_MEDIA_LED, 4); // Query the current value of MediaLed4
 
 **Note:** _This function is not applicable to **Int32** and **Float** LedDigits_
+
+<br/>
+
+### **setLedDigitsValue(index, value)**
+
+This function can be used to set the 16-bit integer _value_ of the LedDigits specified by _index_
+
+<br/>
+
+| Parameters | Type        | Description                       |
+|:----------:|:-----------:| --------------------------------- |
+| index      | int8_t      | The index of the target LedDigits |
+| value      | int16_t     | The new value for the LedDigits   |
+
+<br/>
+
+**Return:** success or failure (_boolean_)
+
+<br/>
+
+#### Example: 
+    mates.setLedDigitsValue(2, 50); // Set value of LedDigits2 to 50
+
+**Note:** _This function is only applicable for **Int16** LedDigits_
+
+<br/>
+
+### **setLedDigitsValue(index, value)**
+
+This function can be used to set the 32-bit integer _value_ of the LedDigits specified by _index_
+
+<br/>
+
+| Parameters | Type        | Description                       |
+|:----------:|:-----------:| --------------------------------- |
+| index      | int8_t      | The index of the target LedDigits |
+| value      | int32_t     | The new value for the LedDigits   |
+
+<br/>
+
+**Return:** success or failure (_boolean_)
+
+<br/>
+
+#### Example: 
+    mates.setLedDigitsValue(0, 602214076); // Set value of LedDigits0 to 602214076
+
+**Note:** _This function is only applicable for **Int32** LedDigits_
+
+
+<br/>
+
+### **setLedDigitsValue(index, value)**
+
+This function can be used to set the floating point _value_ of the LedDigits specified by _index_
+
+<br/>
+
+| Parameters | Type        | Description                       |
+|:----------:|:-----------:| --------------------------------- |
+| index      | int8_t      | The index of the target LedDigits |
+| value      | int32_t     | The new value for the LedDigits   |
+
+<br/>
+
+**Return:** success or failure (_boolean_)
+
+<br/>
+
+#### Example: 
+    mates.setLedDigitsValue(1, 3.1416); // Set value of LedDigits1 to 3.1416
+
+**Note:** _This function is only applicable for **Float** LedDigits_
 
 <br/>
 

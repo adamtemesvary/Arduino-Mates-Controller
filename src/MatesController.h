@@ -15,12 +15,23 @@
 #include "pins_arduino.h"
 #include "WConstants.h"
 #endif
+#include <stdarg.h>
 
-#define __MATES_STUDIO_COMPATIBILITY_VERSION__  "0.3.22"
-#define __MATES_CONTROLLER_LIBRARY_VERSION__    "0.1.3"
+#define __MATES_STUDIO_COMPATIBILITY_VERSION__  "0.4.0"
+#define __MATES_CONTROLLER_LIBRARY_VERSION__    "0.2.0"
 
 #define __MATES_STRING_BUFFER_SIZE__            50
 #define __MATES_BOOT_TIMEOUT__                  5000
+
+/*
+ * RELEASE NOTES
+ *   0.2.0: 
+ *      Removed functions of setWidgetValue to decrease the chance of ambiguous overloaded function compiler error
+ *      Added separate LedDigits functions to replace the setWidgetValue overload functions (int32_t and float)
+ *   0.1.X:
+ *      Initial internal release
+ */
+
 
 typedef enum {
   NO_SERIAL,
@@ -60,16 +71,14 @@ class MatesController {
 
     // Common widget functions
     bool setWidgetValue(int16_t widget, int16_t value);
-    bool setWidgetValue(int16_t widget, int32_t value);
-    bool setWidgetValue(int16_t widget, float value);
     int16_t getWidgetValue(int16_t widget);
-
     bool setWidgetValue(MatesWidget type, uint8_t index, int16_t value);
-    bool setWidgetValue(MatesWidget type, uint8_t index, int32_t value);
-    bool setWidgetValue(MatesWidget type, uint8_t index, float value);
     int16_t getWidgetValue(MatesWidget type, uint8_t index);
 
     // Widget-specific functions
+    bool setLedDigitsValue(uint8_t index, int16_t value);
+    bool setLedDigitsValue(uint8_t index, int32_t value);
+    bool setLedDigitsValue(uint8_t index, float value);
     bool setSpectrumValue(int16_t widget, uint8_t gaugeIndex, uint8_t value);
     bool setLedSpectrumValue(uint8_t index, uint8_t gaugeIndex, uint8_t value);
     bool setMediaSpectrumValue(uint8_t index, uint8_t gaugeIndex, uint8_t value);
@@ -142,6 +151,8 @@ class MatesController {
     int16_t ReadResponse(uint16_t timeout = 500);
 
     // Widget Support Functions
+    bool _setWidgetValue(int16_t widget, int32_t value);
+    bool _setWidgetValue(int16_t widget, float value);
     bool updateDotMatrix(uint16_t index, const int8_t * buf, uint16_t len);
 
 };
